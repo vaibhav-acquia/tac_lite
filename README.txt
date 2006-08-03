@@ -81,7 +81,7 @@ Associate the vocabulary with node types, as you would normally do.
 
 Add several terms to that category.
 
-Go to administer >> settings >> tac_lite.
+Go to administer >> access control >> tac_lite.
 
 Select the category you created in the earlier step ("Private Projects").
 
@@ -107,6 +107,11 @@ table works.  To make nodes visible, you have to re-save them
 This will cause the appropriate entries to be written to the
 node_access table.  Of course, there should be a way to automate this
 process.  Any volunteers?
+
+Alternative to re-saving all nodes: if you simply want to make all nodes visible to all users, try this SQL (backup your database first):
+
+INSERT INTO node_access (nid, gid, realm, grant_view) SELECT nid, 0, 'tac_lite', 1 FROM node;
+
 
 RELATED MODULES
 ---------------
