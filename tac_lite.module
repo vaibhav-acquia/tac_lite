@@ -282,6 +282,10 @@ function _tac_lite_get_terms(&$node) {
 		  }
 		}
 	  }
+      else if (is_object($term)) {
+        // term structure is sometime object instead of array, http://drupal.org/node/76729
+        $tids[$term->tid] = $term->tid;
+      }
 	  else {
 		// $term is a tid
 		$tids[$term] = $term;
