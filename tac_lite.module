@@ -249,6 +249,7 @@ Terms are placed in $node->taxonomy by the form.
 */
 function _tac_lite_get_terms(&$node) {
   $tids = array();
+
   // emulating code from taxonomy_node_save here.
   // note that free tagging vocabs not currently supported
   if (count($node->taxonomy)) {
@@ -268,10 +269,15 @@ function _tac_lite_get_terms(&$node) {
         // in drupal 5 term is an object.  Is this right?
         $tids[$term->tid] = $term->tid;
       }
-	  else {
-		// $term is a tid.  In drupal 5 is this code still reached?
+	  else if (is_numeric($term)) {
+		// $term is a tid.
 		$tids[$term] = $term;
 	  }
+      else if ($term) {
+        drupal_set_message(t('Unexpected term value "%term" in tac_lite.',
+                             array('%term' => $term)),
+                           'error');
+      }
 	}
   }
   
