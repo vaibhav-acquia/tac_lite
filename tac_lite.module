@@ -280,7 +280,7 @@ function _tac_lite_get_terms(&$node) {
       }
 	}
   }
-  
+
   return $tids;
 }
 
@@ -306,8 +306,9 @@ function _tac_lite_user_tids(&$account) {
   if (count($account->tac_lite)) {
 	// $account->tac_lite is array.  Keys are vids, values are array of tids within that vocabulary, to which the user has access
 	foreach ($account->tac_lite as $tids) {
-	  if (count($tids))
+	  if (count($tids)) {
 		$grants = array_merge($grants, $tids);
+      }
 	}
   }
 
@@ -316,8 +317,9 @@ function _tac_lite_user_tids(&$account) {
   foreach ($account->roles as $rid => $role_name) {
 	if (count($defaults[$rid])) {
 	  foreach ($defaults[$rid] as $tids) {
-		if (count($tids))
-		  $grants = array_merge($grants, $tids);
+		if (count($tids)) {
+          $grants = array_merge($grants, $tids);
+        }
 	  }
 	}
   }
@@ -326,9 +328,17 @@ function _tac_lite_user_tids(&$account) {
   // TODO: make this behavior configurable, to play nicely with other node_access modules which may be installed
   $grants[] = 0;
 
+  // Because of some flakyness in the form API and the form we insert under
+  // user settings, we may have a bogus entry with vid set
+  // to ''.  Here we make sure not to return that.
+  unset($grants['']);
+
   return $grants;
 }
 
+/**
+ * Implementation of hook_node_grants
+ */
 function tac_lite_node_grants(&$account, &$op) {
   // tac_lite deals only with 'view' permission.
   // if there is a clean way to add support for other ops, I'm open to it.  However users who need that should currently use the Taxonomy Access Control module.
