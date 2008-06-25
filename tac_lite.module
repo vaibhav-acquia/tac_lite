@@ -17,8 +17,7 @@ function tac_lite_help($section) {
 	$output .= '<p>'.t('While this module has been designed to be as simple as possible to use, there are several steps required to set it up.')."</p>\n";
 	$output .= "<ol>\n";
 	$output.= '<li>'.t('Define one or more vocabularies whose terms will control which users have access.  For example, you could define a vocabulary called \'Privacy\' with terms \'Public\' and \'Private\'.')."</li>\n";
-	$output .= '<li>'.t('Tell this module which vocabulary or vocabularies control privacy. (!link)', array('!link' => l(t('administer -> access control -> tac_lite'), 'admin/user/access/tac_lite')))."</li>\n";
-	$output .= '<li>'.t('Grant access to users based on their roles (!link), and/or...', array('!link' => l(t('administer -> access control -> tac_lite -> by role'), 'admin/user/access/tac_lite/roles')))."</li>\n";
+	$output .= '<li>'.t('Tell this module which vocabulary or vocabularies control privacy. (!link)', array('!link' => l(t('administer -> access control -> tac_lite'), 'admin/user/tac_lite')))."</li>\n";
 	$output .= '<li>'.t('Grant access to individual users.  (See the tac_lite tab under user -> edit.)')."</li>\n";
 	$output .= '<li>'.t('Finally, if your site contains content, you will need to re-save all nodes.  This ensures that Drupal\'s node_access table is up-to-date.  Otherwise, content submitted before this module was configured will be hidden.')."</li>\n";
 	$output .= "</ol>\n";
@@ -45,25 +44,26 @@ function tac_lite_menu($may_cache) {
   $admin_access = user_access('administer_tac_lite');
 
   if ($may_cache) {
-	$items[] = array('path' => 'admin/user/access/tac_lite', 
+	$items[] = array('path' => 'admin/user/tac_lite', 
 					 'title' => t('Access control by taxonomy'),
                      'callback' => 'drupal_get_form',
 					 'callback arguments' => 'tac_lite_admin_settings',
-					 'type' => MENU_LOCAL_TASK,
+					 'type' => MENU_NORMAL_ITEM,
 					 'weight' => 1, // after 'roles' tab
 					 'access' => $admin_access);
-	$items[] = array('path' => 'admin/user/access/tac_lite/settings',
+    
+	$items[] = array('path' => 'admin/user/tac_lite/settings',
 					 'title' => t('Settings'),
 					 'type' => MENU_DEFAULT_LOCAL_TASK,
 					 'weight' => -1,
 					 'access' => $admin_access,
-					 );
+    );
   }
   else {
-    if (arg(0) == 'admin' && arg(1) == 'user' && arg(2) == 'access' && arg(3) == 'tac_lite') {
+    if (arg(0) == 'admin' && arg(1) == 'user' && arg(2) == 'tac_lite') {
       $schemes = variable_get('tac_lite_schemes', 1);
       for ($i = 1; $i <= $schemes; $i++) {
-        $items[] = array('path' => 'admin/user/access/tac_lite/scheme/' . $i,
+        $items[] = array('path' => 'admin/user/tac_lite/scheme/' . $i,
                          'title' => t('Scheme !num', array('!num' => $i)),
                          'callback' => 'tac_lite_admin_settings_scheme',
                          'callback arguments' => $i,
@@ -225,7 +225,7 @@ function tac_lite_admin_scheme_form($i) {
   }
   else {
     return (array('body' => array('#type' => 'markup',
-                                  '#value' => t('First select vocabularies on the <a href=!url>settings page</a>.', array('!url' => url('admin/user/access/tac_lite'))))));
+                                  '#value' => t('First select vocabularies on the <a href=!url>settings page</a>.', array('!url' => url('admin/user/tac_lite'))))));
   }
 }
 /**
@@ -278,7 +278,7 @@ function tac_lite_user($op, $edit, $account, $category = null) {
         $form['tac_lite'][0] = 
           array('#type' => 'markup',
                 '#value' => '<p>' . t('You may grant this user access based on the schemes and terms below.  These permissions are in addition to <a href="!url">role based grants on scheme settings pages</a>.',
-                                      array('!url' => url('admin/user/access/tac_lite/scheme/1'))) . "</p>\n",
+                                      array('!url' => url('admin/user/tac_lite/scheme/1'))) . "</p>\n",
                 '#weight' => -1);
 
         return $form;
