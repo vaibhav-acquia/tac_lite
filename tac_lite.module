@@ -255,11 +255,12 @@ function tac_lite_user($op, $edit, $account, $category = null) {
                  ),
     );
     break;
-      
+    
   case 'form':
-	if ($category == 'tac_lite') {
-	  $vids = variable_get('tac_lite_categories', null);
-	  if (count($vids)) {
+    $vocabularies = taxonomy_get_vocabularies();
+    if ($category == 'tac_lite') {
+      $vids = variable_get('tac_lite_categories', null);
+      if (count($vids)) {
         for ($i = 1; $i <= variable_get('tac_lite_schemes', 1); $i++) {
           $config = _tac_lite_config($i);
           if ($config['name']) {
@@ -269,13 +270,13 @@ function tac_lite_user($op, $edit, $account, $category = null) {
                     '#description' => t('This scheme includes permissions %perms',
                                         array('%perms' => implode(' and ', $config['perms']))),
                     '#tree' => TRUE,
-              );
+		    );
             foreach ($vids as $vid) {
-              $v = taxonomy_get_vocabularies($vid);
+              $v = $vocabularies[$vid];
               $form['tac_lite'][$config['realm']][$vid] = 
                 _taxonomy_term_select($v->name,
                                       null, // name no longer used in new form api
-                                      $account->tac_lite[$vid],
+                                      isset($account->tac_lite) ? $account->tac_lite[$vid] : NULL,
                                       $vid,
                                       '',
                                       true,
@@ -288,11 +289,11 @@ function tac_lite_user($op, $edit, $account, $category = null) {
                 '#value' => '<p>' . t('You may grant this user access based on the schemes and terms below.  These permissions are in addition to <a href="!url">role based grants on scheme settings pages</a>.',
                                       array('!url' => url('admin/user/access/tac_lite/scheme_1'))) . "</p>\n",
                 '#weight' => -1);
-
+	
         return $form;
       }
     }
-	break;
+    break;
   case 'validate':
 	//print_r($edit);
 	//print_r($account);
