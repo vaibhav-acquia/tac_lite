@@ -263,6 +263,7 @@ function tac_lite_user($op, $edit, $account, $category = null) {
       if (count($vids)) {
         for ($i = 1; $i <= variable_get('tac_lite_schemes', 1); $i++) {
           $config = _tac_lite_config($i);
+          $terms = isset($account->$config['realm']) ? $account->$config['realm'] : array();
           if ($config['name']) {
             $form['tac_lite'][$config['realm']] =
               array('#type' => 'fieldset',
@@ -270,13 +271,13 @@ function tac_lite_user($op, $edit, $account, $category = null) {
                     '#description' => t('This scheme includes permissions %perms',
                                         array('%perms' => implode(' and ', $config['perms']))),
                     '#tree' => TRUE,
-		    );
+              );
             foreach ($vids as $vid) {
               $v = $vocabularies[$vid];
               $form['tac_lite'][$config['realm']][$vid] = 
                 _taxonomy_term_select($v->name,
                                       null, // name no longer used in new form api
-                                      isset($account->tac_lite) ? $account->tac_lite[$vid] : NULL,
+                                      isset($terms[$vid]) ? $terms[$vid] : NULL,
                                       $vid,
                                       '',
                                       true,
