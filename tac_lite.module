@@ -2,13 +2,13 @@
   // $Id$
 /**
  * @file
- * Control access to site content based on taxonomy, roles and users.
+ *   Control access to site content based on taxonomy, roles and users.
  *
  *
  */
 
 /**
- * Implementation of hook_help
+ * Implementation of hook_help().
  */
 function tac_lite_help($section) {
   switch ($section) {
@@ -33,7 +33,7 @@ function tac_lite_help($section) {
  * Implementation of hook_perm().
  */
 function tac_lite_perm() {
-  return array('administer_tac_lite');
+  return array('administer tac_lite');
 }
 
 /**
@@ -50,14 +50,14 @@ function tac_lite_menu() {
           'page arguments' => array('tac_lite_admin_settings'),
           'type' => MENU_NORMAL_ITEM,
           'weight' => 1, // after 'roles' tab
-          'access arguments' => array('administer_tac_lite'),
+          'access arguments' => array('administer tac_lite'),
     );
 
   $items['admin/user/access/tac_lite/settings'] = 
     array('title' => 'Settings',
           'type' => MENU_DEFAULT_LOCAL_TASK,
           'weight' => -1,
-          'access arguments' => array('administer_tac_lite'),
+          'access arguments' => array('administer tac_lite'),
     );
   
   $schemes = variable_get('tac_lite_schemes', 1);
@@ -67,7 +67,7 @@ function tac_lite_menu() {
             'page callback' => 'tac_lite_admin_settings_scheme',
             'page arguments' => array((string)$i),
             'type' => MENU_LOCAL_TASK,
-            'access arguments' => array('administer_tac_lite'),
+            'access arguments' => array('administer tac_lite'),
       );
   }
 
@@ -233,24 +233,21 @@ function tac_lite_admin_scheme_form($form_state, $i) {
                                   '#value' => t('First select vocabularies on the <a href=!url>settings page</a>.', array('!url' => url('admin/user/access/tac_lite'))))));
   }
 }
+
 /**
  * Implementation of hook_user().
  */
-
 function tac_lite_user($op, $edit, $account, $category = null) {
-  //drupal_set_message("tac_lite_user($op) called."); // debug
 
-  // only for administrators
-  global $user;
-  if (!user_access('administer_tac_lite'))
-	return;
+  if (!user_access('administer tac_lite')) {
+    // Only for tac_lite administrators.
+    return;
+  }
 
   switch ($op) {
   case 'categories':
     return array(array('name' => 'tac_lite',
-                       'title' => 'Taxonomy-based access',
-                       'access callback' => 'user_access',
-                       'access arguments' => array('administer_tac_lite'),
+                       'title' => t('Taxonomy-based access'),
                        'weight' => 5,
                  ),
     );
@@ -463,9 +460,9 @@ function tac_lite_node_grants(&$account, &$op) {
 function tac_lite_db_rewrite_sql($query, $primary_table, $primary_field, $args) {
   global $user;
 
-  // if administrator, give all access
-  if (user_access('administer_tac_lite')) {
-	return;
+  if (user_access('administer tac_lite')) {
+    // Only for tac_lite administrators.
+    return;
   }
 
   // the vocabularies containing protected info.

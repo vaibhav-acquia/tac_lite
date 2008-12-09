@@ -50,3 +50,22 @@ function tac_lite_update_3() {
   $ret[] = update_sql("UPDATE {variable} SET name='tac_lite_grants_scheme_1' WHERE name='tac_lite_default_grants'");
   return $ret;
 }
+
+/**
+ * Start of updates to Drupal 6.x-1.2. Start using Drupal standard
+ * update numbers.
+ */
+
+/**
+ * Rename permission from "administer_tac_lite" to "administer
+ * tac_lite" for UI consistency.
+ */
+function tac_lite_update_6001() {
+  $ret = array();
+  $result = db_query("SELECT * FROM {permission} WHERE perm LIKE '%administer_tac_lite%'");
+  while ($permission = db_fetch_object($result)) {
+    $perm = str_replace('administer_tac_lite', 'administer tac_lite', $permission->perm);
+    $ret[] = update_sql("UPDATE {permission} SET perm = '". db_escape_string($perm) ."' WHERE rid =". $permission->rid);
+  }
+  return $ret;
+}
