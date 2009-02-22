@@ -252,6 +252,8 @@ function tac_lite_user($op, $edit, $account, $category = null) {
     return array(array('name' => 'tac_lite',
                        'title' => t('Taxonomy-based access'),
                        'weight' => 5,
+                       'access callback' => 'user_access',
+                       'access arguments' => array('administer users'),
                  ),
     );
     break;
