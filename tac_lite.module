@@ -151,12 +151,21 @@ function tac_lite_admin_settings_scheme($i) {
 function _tac_lite_config($scheme) {
   // different defaults for scheme 1
   if ($scheme === 1)
-    $config = variable_get('tac_lite_config_scheme_' . $scheme, 
-                           array('name' => t('read'), 
-                                 'perms' => array('grant_view')));
+    $config = variable_get('tac_lite_config_scheme_' . $scheme, array(
+                             'name' => t('read'), 
+                             'perms' => array('grant_view'),
+                           ));
   else
-    $config = variable_get('tac_lite_config_scheme_' . $scheme, 
-                           array('name' => NULL, 'perms' => array()));
+    $config = variable_get('tac_lite_config_scheme_' . $scheme, array(
+                             'name' => NULL, 
+                             'perms' => array(),
+                           ));
+
+  // Merge defaults, for backward compatibility.
+  $config += array(
+    'term_visibility' => isset($config['perms']['grant_view']) && $config['perms']['grant_view'] ? TRUE: FALSE,
+  );
+  
   // For backward compatability, use naming convention for scheme 1
   if ($scheme == 1)
     $config['realm'] = 'tac_lite';
@@ -200,6 +209,13 @@ function tac_lite_admin_scheme_form($form_state, $i) {
       '#required' => FALSE, /* disable scheme by selecting none */
     );
     
+    $form['tac_lite_config_scheme_' . $i]['term_visibility'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Term Visibility'),
+      '#description' => t('If checked, this scheme determines whether a user can view <strong>terms</strong>.  Note the <em>view</em> permission in the select field above refers to <strong>node</strong> visibility.  This checkbox refers to <strong>term</strong> visibility, for example in a content edit form or tag cloud.'),
+      '#default_value'=> $config['term_visibility'],
+    );
+
     $form['helptext'] = array(
       '#type' => 'markup',
       '#value' => t('You may grant these permissions by role, below.  To grant permission to an individual user, visit the tac_lite tab on the user edit page.'),
@@ -267,13 +283,18 @@ function tac_lite_user($op, $edit, $account, $category = null) {
           $config = _tac_lite_config($i);
           $terms = isset($account->$config['realm']) ? $account->$config['realm'] : array();
           if ($config['name']) {
+            $perms = $config['perms'];
+            if ($config['term_visibility']) {
+              $perms[] = t('term visibility');
+            }
             $form['tac_lite'][$config['realm']] = array(
               '#type' => 'fieldset',
               '#title'=> $config['name'],
-              '#description' => t('This scheme includes permissions %perms',
-                                  array('%perms' => implode(' and ', $config['perms']))),
+              '#description' => t('This scheme controls %perms.',
+                                  array('%perms' => implode(' and ', $perms))),
               '#tree' => TRUE,
             );
+
             foreach ($vids as $vid) {
               $v = $vocabularies[$vid];
               $form['tac_lite'][$config['realm']][$vid] = 
@@ -284,6 +305,8 @@ function tac_lite_user($op, $edit, $account, $category = null) {
                                       '',
                                       true,
                                       '<'.t('none').'>');
+              $form['tac_lite'][$config['realm']][$vid]['#description'] =
+                t('Grant permission to this user by selecting terms.  Note that permissions are in addition to those granted based on user roles.');
             }
           }
         }
@@ -472,19 +495,19 @@ function tac_lite_db_rewrite_sql($query, $primary_table, $primary_field, $args) 
   // the vocabularies containing protected info.
   $vids = variable_get('tac_lite_categories', array(0));
   
+  $term_visibility = FALSE;
+  
   // the terms this user is allowed to see
   $tids = array();
   for ($i = 1; $i <= variable_get('tac_lite_schemes', 1); $i++) {
     $config = _tac_lite_config($i);
-    if (in_array('grant_view', $config['perms'])) {
+    if ($config['term_visibility']) {
       $tids = array_merge($tids, _tac_lite_user_tids($user, $i));
+      $term_visibility = TRUE;
     }
   }
   
-  // Note that if tac_lite is configured, but no schemes support grant_view,
-  // we assume everyone can view all terms.
-
-  if (count($tids) && is_array($vids) && count($vids)) {
+  if ($term_visibility && is_array($vids) && count($vids)) {
     switch ($primary_field) {
     case 'tid':
       // prevent users from seeing terms they do not have permission to read.
