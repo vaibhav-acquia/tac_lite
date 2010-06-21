@@ -432,7 +432,7 @@ function _tac_lite_get_terms_by_nid($nid) {
  * Users are granted access to terms either because of who they are,
  * or because of the roles they have.
  */
-function _tac_lite_user_tids(&$account, $scheme) {
+function _tac_lite_user_tids($account, $scheme) {
   // grant id 0 is reserved for nodes which were not given a grant id when they were created.  By adding 0 to the grant id, we let the user view those nodes.
   $grants = array(0);
   $config = _tac_lite_config($scheme);
@@ -472,7 +472,7 @@ function _tac_lite_user_tids(&$account, $scheme) {
  * Returns any grants which may give the user permission to perform the
  * requested op.
  */
-function tac_lite_node_grants(&$account, &$op) {
+function tac_lite_node_grants($account, &$op) {
   $grants = array();
   for ($i = 1; $i <= variable_get('tac_lite_schemes', 1); $i++) {
     $config = _tac_lite_config($i);
