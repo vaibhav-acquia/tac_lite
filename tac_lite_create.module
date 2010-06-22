@@ -68,7 +68,7 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
       '#type' => 'checkbox',
       '#title' => 'Create',
       '#default_value' => isset($config['tac_lite_create']) ? $config['tac_lite_create'] : FALSE,
-      '#description' => t('Include terms shown when creating and editing nodes.  This controls which terms appear on the node edit forms.  It does not control which users can edit or update nodes.  Note that schemes granting <em>update</em> permission (above) imply <em>create</em> as well.'),
+      '#description' => t('Show terms when creating and editing nodes.  This does <strong>not</strong> control which users can create a given content type. This <strong>does</strong> control which terms appear on the node edit forms.  Note that schemes granting <em>update</em> permission (above) imply <em>create</em> as well.'),
     );
   }
 }

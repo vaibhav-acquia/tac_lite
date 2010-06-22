@@ -19,7 +19,7 @@ function tac_lite_help($section) {
     $output.= '<li>'.t('Define one or more vocabularies whose terms will control which users have access.  For example, you could define a vocabulary called \'Privacy\' with terms \'Public\' and \'Private\'.')."</li>\n";
     $output .= '<li>'.t('Tell this module which vocabulary or vocabularies control privacy. (!link)', array('!link' => l(t('administer -> access control -> tac_lite'), 'admin/user/access/tac_lite')))."</li>\n";
     $output .= '<li>'.t('Grant access to users based on their roles (!link), and/or...', array('!link' => l(t('administer -> access control -> tac_lite -> by role'), 'admin/user/access/tac_lite/roles')))."</li>\n";
-    $output .= '<li>'.t('Grant access to individual users.  (See the tac_lite tab under user -> edit.)')."</li>\n";
+    $output .= '<li>'.t('Grant access to individual users.  (See the taxonomy-based access tab under user -> edit.)')."</li>\n";
     $output .= '<li>'.t('Finally, if your site contains content, you will need to re-save all nodes.  This ensures that Drupal\'s node_access table is up-to-date.  Otherwise, content submitted before this module was configured will be hidden.')."</li>\n";
     $output .= "</ol>\n";
     $output .= '<p>'.t('Currently, this module works with view grants only (no update or delete grants).')."</p>\n";
@@ -218,7 +218,7 @@ function tac_lite_admin_scheme_form($form_state, $i) {
 
     $form['helptext'] = array(
       '#type' => 'markup',
-      '#value' => t('You may grant these permissions by role, below.  To grant permission to an individual user, visit the tac_lite tab on the user edit page.'),
+      '#value' => t('You may grant these permissions by role, below.  To grant permission to an individual user, visit the taxonomy-based access tab on the user edit page.'),
     );
     
     $vocabularies = taxonomy_get_vocabularies();
