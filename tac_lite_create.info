@@ -1,0 +1,4 @@
+name = Taxonomy Access Control Lite Create
+description = Restrict Taxonomy selection on node add/edit forms to only terms the user can create
+dependencies[] = tac_lite
+core = 6.x

@@ -44,7 +44,7 @@ function tac_lite_menu() {
   $items = array();
   
   $items['admin/user/access/tac_lite'] = array(
-    'title' => 'Access control by taxonomy',
+    'title' => 'Access by Taxonomy',
     'description' => "taxonomy-based permissions by tac_lite",
     'page callback' => 'drupal_get_form',
     'page arguments' => array('tac_lite_admin_settings'),
@@ -184,7 +184,7 @@ function tac_lite_admin_scheme_form($form_state, $i) {
   
   if (count($vids)) {
     $config = _tac_lite_config($i);
-    
+    $form['#tac_lite_config'] = $config;
     $form['tac_lite_config_scheme_' . $i] = array('#tree' => TRUE);
     $form['tac_lite_config_scheme_' . $i]['name'] = array(
       '#type' => 'textfield',
@@ -211,7 +211,7 @@ function tac_lite_admin_scheme_form($form_state, $i) {
     
     $form['tac_lite_config_scheme_' . $i]['term_visibility'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Term Visibility'),
+      '#title' => t('Term visibility'),
       '#description' => t('If checked, this scheme determines whether a user can view <strong>terms</strong>.  Note the <em>view</em> permission in the select field above refers to <strong>node</strong> visibility.  This checkbox refers to <strong>term</strong> visibility, for example in a content edit form or tag cloud.'),
       '#default_value'=> $config['term_visibility'],
     );
