@@ -472,7 +472,7 @@ function _tac_lite_user_tids($account, $scheme) {
  * Returns any grants which may give the user permission to perform the
  * requested op.
  */
-function tac_lite_node_grants($account, &$op) {
+function tac_lite_node_grants($account, $op) {
   $grants = array();
   for ($i = 1; $i <= variable_get('tac_lite_schemes', 1); $i++) {
     $config = _tac_lite_config($i);
