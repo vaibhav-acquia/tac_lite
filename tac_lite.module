@@ -111,7 +111,7 @@ function tac_lite_admin_settings() {
     $form['tac_lite_schemes'] = array(
       '#type' => 'select',
       '#title' => t('Schemes'),
-      '#description' => t('Each scheme allows for a different set of permissions.  For example, use scheme 1 for read-only permission; scheme 2 for read and update; scheme 3 for delete; etc.  Additional schemes increase the size of your node_access table, so use no more than you need.  Also note that ff you use tac_lite to assign update permission, it is recommended that you give those users read permission on all terms of that vocabulary.'),
+      '#description' => t('Each scheme allows for a different set of permissions.  For example, use scheme 1 for read-only permission; scheme 2 for read and update; scheme 3 for delete; etc.  Additional schemes increase the size of your node_access table, so use no more than you need.'),
       '#default_value' => variable_get('tac_lite_schemes', 1),
       '#options' => $scheme_options,
       '#required' => TRUE,
@@ -205,22 +205,29 @@ function tac_lite_admin_scheme_form($form_state, $i) {
       '#multiple' => TRUE,
       '#options' => $options,
       '#default_value' => $config['perms'],
-      '#description' => t('Select which permissions are granted by this scheme.'),
-      '#required' => FALSE, /* disable scheme by selecting none */
+      '#description' => t('Select which permissions are granted by this scheme.  <br/>Note when granting update, it is best to enable visibility on all terms.  Otherwise a user may unknowingly remove invisible terms while editing a node.'),
+      '#required' => FALSE,
     );
     
     $form['tac_lite_config_scheme_' . $i]['term_visibility'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Term visibility'),
+      '#title' => t('Visibility'),
       '#description' => t('If checked, this scheme determines whether a user can view <strong>terms</strong>.  Note the <em>view</em> permission in the select field above refers to <strong>node</strong> visibility.  This checkbox refers to <strong>term</strong> visibility, for example in a content edit form or tag cloud.'),
       '#default_value'=> $config['term_visibility'],
     );
 
     $form['helptext'] = array(
       '#type' => 'markup',
-      '#value' => t('You may grant these permissions by role, below.  To grant permission to an individual user, visit the taxonomy-based access tab on the user edit page.'),
+      '#value' => t('To grant to an individual user, visit the <em>access by taxonomy</em> tab on the account edit page.'),
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
     );
-    
+    $form['helptext2'] = array(
+      '#type' => 'markup',
+      '#value' => t('To grant by role, select the terms below.'),
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+    );
     $vocabularies = taxonomy_get_vocabularies();
     $all_defaults = variable_get('tac_lite_grants_scheme_' . $i, array());
     $form['tac_lite_grants_scheme_' . $i] = array('#tree' => true);
@@ -228,10 +235,12 @@ function tac_lite_admin_scheme_form($form_state, $i) {
       $form['tac_lite_grants_scheme_' . $i][$rid] = array(
         '#type' => 'fieldset',
         '#tree' => true,
-        '#title' => t('Access for %role', array('%role' => $role_name)),
-        '#description' => t(''),			 
+        '#title' => t('Grant permission by role: !role', array('!role' => $role_name)),
+        '#description' => t(''),
+        '#collapsible' => TRUE,
       );
-      $defaults = count($all_defaults) ? $all_defaults[$rid] : NULL;
+
+      $defaults = isset($all_defaults[$rid]) ? $all_defaults[$rid] : NULL;
       foreach ($vids as $vid) {
 	$v = $vocabularies[$vid];
 	$form['tac_lite_grants_scheme_' . $i][$rid][$vid] = 
@@ -266,11 +275,11 @@ function tac_lite_user($op, $edit, $account, $category = null) {
   switch ($op) {
   case 'categories':
     return array(array('name' => 'tac_lite',
-                       'title' => t('Taxonomy-based access'),
-                       'weight' => 5,
-                       'access callback' => 'user_access',
-                       'access arguments' => array('administer users'),
-                 ),
+        'title' => t('Access by taxonomy'),
+        'weight' => 5,
+        'access callback' => 'user_access',
+        'access arguments' => array('administer users'),
+      ),
     );
     break;
     
