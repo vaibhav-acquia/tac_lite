@@ -34,36 +34,38 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
       }
     }
 
-    foreach ($form['taxonomy'] as $vid => $data) {
-      if (!is_numeric($vid) || !in_array($vid, $vids)) {
-        // Not a vid, or not controlled by tac_lite.
-        continue;
-      }
-      foreach($data['#options'] as $num => $term) {
-        if (!is_numeric($num)) {
+    if (isset($form['taxonomy'])) {
+      foreach ($form['taxonomy'] as $vid => $data) {
+        if (!is_numeric($vid) || !in_array($vid, $vids)) {
+          // Not a vid, or not controlled by tac_lite.
           continue;
         }
-        if (!in_array(key($term->option), $tids)) {
-          if (!in_array(key($term->option), $form['taxonomy'][$vid]['#default_value'])) {
-            // The term is not the default value, and user is not allowed to create with it.
-            unset($form['taxonomy'][$vid]['#options'][$num]);
+        foreach($data['#options'] as $num => $term) {
+          if (!is_numeric($num)) {
+            continue;
+          }
+          if (!in_array(key($term->option), $tids)) {
+            if (!in_array(key($term->option), $form['taxonomy'][$vid]['#default_value'])) {
+              // The term is not the default value, and user is not allowed to create with it.
+              unset($form['taxonomy'][$vid]['#options'][$num]);
+            }
           }
         }
-      }
 
-      if (count($form['taxonomy'][$vid]['#options']) == 0 && $form['taxonomy'][$vid]['#required'] == TRUE) {
-        drupal_set_message(t('You have no permissions to add content to the required %name vocabulary. Please contact the site administrator if you believe you should have permission to add content.', array('%name' => $form['taxonomy'][$vid]['#title'])));
-        drupal_access_denied();
-        exit();
-      }
-      
-      if (count($form['taxonomy'][$vid]['#options']) <= 1) {
-        // Don't show if the only option left is <none>.
-        unset($form['taxonomy'][$vid]);
-      }
-      if (isset($form['taxonomy'][$vid]['#size']) &&
-        $form['taxonomy'][$vid]['#size'] > count($form['taxonomy'][$vid]['#options'])) {
-        $form['taxonomy'][$vid]['#size'] = count($form['taxonomy'][$vid]['#options']);
+        if (count($form['taxonomy'][$vid]['#options']) == 0 && $form['taxonomy'][$vid]['#required'] == TRUE) {
+          drupal_set_message(t('You have no permissions to add content to the required %name vocabulary. Please contact the site administrator if you believe you should have permission to add content.', array('%name' => $form['taxonomy'][$vid]['#title'])));
+          drupal_access_denied();
+          exit();
+        }
+        
+        if (count($form['taxonomy'][$vid]['#options']) <= 1) {
+          // Don't show if the only option left is <none>.
+          unset($form['taxonomy'][$vid]);
+        }
+        if (isset($form['taxonomy'][$vid]['#size']) &&
+          $form['taxonomy'][$vid]['#size'] > count($form['taxonomy'][$vid]['#options'])) {
+          $form['taxonomy'][$vid]['#size'] = count($form['taxonomy'][$vid]['#options']);
+        }
       }
     }
   }
