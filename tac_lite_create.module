@@ -10,12 +10,12 @@
  */
 
 /**
- * Implementation of hook_form_alter()
+ * Implementation of hook_form_alter().
  */
 function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
   if (strpos($form_id, 'node_form') !== FALSE) {
     global $user;
-    
+
     if (user_access('administer tac_lite')) {
       // no need to restrict based on update permission in this cases
       return;
@@ -40,7 +40,7 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
           // Not a vid, or not controlled by tac_lite.
           continue;
         }
-        foreach($data['#options'] as $num => $term) {
+        foreach ($data['#options'] as $num => $term) {
           if (!is_numeric($num)) {
             continue;
           }
@@ -81,4 +81,3 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
     );
   }
 }
-?>
