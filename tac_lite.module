@@ -98,7 +98,7 @@ function tac_lite_admin_settings() {
       '#title' => t('Vocabularies'),
       '#default_value' => variable_get('tac_lite_categories', NULL),
       '#options' => $options,
-      '#description' => t('Select one or more vocabularies to control privacy.  Do not select free tagging vocabularies, they are not supported.'),
+      '#description' => t('Select one or more vocabularies to control privacy.  <br/>Use caution with hierarchical (nested) taxonomies as <em>visibility</em> settings may cause problems on node edit forms.<br/>Do not select free tagging vocabularies, they are not supported.'),
       '#multiple' => TRUE,
       '#required' => TRUE,
     );
@@ -247,7 +247,7 @@ function tac_lite_admin_scheme_form($form_state, $i) {
         $form['tac_lite_grants_scheme_' . $i][$rid][$vid] =
           _taxonomy_term_select($v->name,
             NULL, // name no longer used in new form api
-            $defaults ? $defaults[$vid] : NULL,
+            isset($defaults[$vid]) ? $defaults[$vid] : NULL,
             $vid,
             '',
             TRUE,
