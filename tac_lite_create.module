@@ -77,7 +77,7 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
       '#type' => 'checkbox',
       '#title' => 'Visibility on create and edit forms',
       '#default_value' => isset($config['tac_lite_create']) ? $config['tac_lite_create'] : FALSE,
-      '#description' => t('Show terms when creating content.  This <strong>does not</strong> control which users can create a given content type. This <strong>does</strong> control which terms appear on the node edit forms.  <br/>Note that schemes granting <em>update</em> permission (above) imply <em>visibility on forms</em> as well.  <br/>Note that you should check <strong>both</strong> <em>visiblity</em> checkboxes to have terms appear on edit forms.'),
+      '#description' => t('Show terms when creating content.  This <strong>does not</strong> control which users can create a given content type. This <strong>does</strong> control which terms appear on the node edit forms.  <br/>Note that schemes granting <em>update</em> permission (above) imply <em>visibility on forms</em> as well.'),
     );
   }
 }
