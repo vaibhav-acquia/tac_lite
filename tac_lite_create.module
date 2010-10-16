@@ -29,14 +29,14 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
     for ($i = 1; $i <= variable_get('tac_lite_schemes', 1); $i++) {
       $config = _tac_lite_config($i);
       if ((isset($config['tac_lite_create']) && $config['tac_lite_create']) ||
-          in_array('grant_update', $config['perms'])) {
+        in_array('grant_update', $config['perms'])) {
         $tids = array_merge($tids, _tac_lite_user_tids($user, $i));
       }
     }
 
     foreach ($form['taxonomy'] as $vid => $data) {
       if (!is_numeric($vid) || !in_array($vid, $vids)) {
-        //If not a vid, or not controled under TAC_lite
+        // Not a vid, or not controlled by tac_lite.
         continue;
       }
       foreach($data['#options'] as $num => $term) {
@@ -44,19 +44,26 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
           continue;
         }
         if (!in_array(key($term->option), $tids)) {
-          //if the taxonmy is selected, allow the user to use it
           if (!in_array(key($term->option), $form['taxonomy'][$vid]['#default_value'])) {
+            // The term is not the default value, and user is not allowed to create with it.
             unset($form['taxonomy'][$vid]['#options'][$num]);
           }
         }
-        if (count($form['taxonomy'][$vid]['#options']) == 1) {
-          if ($form['taxonomy'][$vid]['#required'] == TRUE) {
-            drupal_set_message(t('You have no permissions to add content to the required %name vocabulary. Please contact the site administrator if you believe you should have permission to add content.', array('%name' => $form['taxonomy'][$vid]['#title'])));
-            drupal_access_denied();
-            exit();
-          }
-          unset($form['taxonomy'][$vid]);
-        }
+      }
+
+      if (count($form['taxonomy'][$vid]['#options']) == 0 && $form['taxonomy'][$vid]['#required'] == TRUE) {
+        drupal_set_message(t('You have no permissions to add content to the required %name vocabulary. Please contact the site administrator if you believe you should have permission to add content.', array('%name' => $form['taxonomy'][$vid]['#title'])));
+        drupal_access_denied();
+        exit();
+      }
+      
+      if (count($form['taxonomy'][$vid]['#options']) <= 1) {
+        // Don't show if the only option left is <none>.
+        unset($form['taxonomy'][$vid]);
+      }
+      if (isset($form['taxonomy'][$vid]['#size']) &&
+        $form['taxonomy'][$vid]['#size'] > count($form['taxonomy'][$vid]['#options'])) {
+        $form['taxonomy'][$vid]['#size'] = count($form['taxonomy'][$vid]['#options']);
       }
     }
   }
@@ -66,9 +73,9 @@ function tac_lite_create_form_alter(&$form, $form_state, $form_id) {
 
     $form['tac_lite_config_scheme_' . $scheme]['tac_lite_create'] = array(
       '#type' => 'checkbox',
-      '#title' => 'Create',
+      '#title' => 'Visibility on create and edit forms',
       '#default_value' => isset($config['tac_lite_create']) ? $config['tac_lite_create'] : FALSE,
-      '#description' => t('Show terms when creating and editing nodes.  This does <strong>not</strong> control which users can create a given content type. This <strong>does</strong> control which terms appear on the node edit forms.  Note that schemes granting <em>update</em> permission (above) imply <em>create</em> as well.'),
+      '#description' => t('Show terms when creating content.  This <strong>does not</strong> control which users can create a given content type. This <strong>does</strong> control which terms appear on the node edit forms.  <br/>Note that schemes granting <em>update</em> permission (above) imply <em>visibility on forms</em> as well.  <br/>Note that you should check <strong>both</strong> <em>visiblity</em> checkboxes to have terms appear on edit forms.'),
     );
   }
 }
