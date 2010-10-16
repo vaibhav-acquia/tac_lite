@@ -497,39 +497,41 @@ function tac_lite_node_grants($account, $op) {
 function tac_lite_db_rewrite_sql($query, $primary_table, $primary_field, $args) {
   global $user;
 
+  if ($primary_field != 'tid') {
+    // Only changes things in link with 'tid'
+    return;
+  }
+
   if (user_access('administer tac_lite')) {
     // Only for tac_lite administrators.
     return;
   }
 
   // the vocabularies containing protected info.
-  $vids = variable_get('tac_lite_categories', array(0));
+  $vids = variable_get('tac_lite_categories', NULL);
+  $schemes = variable_get('tac_lite_schemes', 1);
+  if (!$vids || !count($vids) || !$schemes) {
+    return;
+  }
 
   $term_visibility = FALSE;
 
   // the terms this user is allowed to see
   $tids = array();
-  for ($i = 1; $i <= variable_get('tac_lite_schemes', 1); $i++) {
+  for ($i = 1; $i <= $schemes; $i++) {
     $config = _tac_lite_config($i);
     if ($config['term_visibility']) {
       $tids = array_merge($tids, _tac_lite_user_tids($user, $i));
       $term_visibility = TRUE;
     }
   }
-
-  if ($term_visibility && is_array($vids) && count($vids)) {
-    switch ($primary_field) {
-      case 'tid':
-        // prevent users from seeing terms they do not have permission to read.
-        $join = "LEFT JOIN {term_data} tac_td ON $primary_table.tid = tac_td.tid";
-        $where = "$primary_table.tid IN (" . implode(', ', $tids) .
-          ") OR tac_td.vid NOT IN (" . implode(',', $vids) .")";
-
-        return array('join' => $join, 'where' => $where);
-        break;
-
-      case 'vid':
-        break;
-    }
+  
+  if ($term_visibility) {
+    // Prevent query from finding terms the current user does not have permission to see.
+    $join = "LEFT JOIN {term_data} tac_td ON $primary_table.tid = tac_td.tid";
+    $where = "$primary_table.tid IN (" . implode(', ', $tids) .
+      ") OR tac_td.vid NOT IN (" . implode(',', $vids) .")";
+    
+    return array('join' => $join, 'where' => $where);
   }
 }
