@@ -61,8 +61,14 @@ function tac_lite_menu() {
 
   $schemes = variable_get('tac_lite_schemes', 1);
   for ($i = 1; $i <= $schemes; $i++) {
+    $scheme = variable_get('tac_lite_config_scheme_'. $i, FALSE);
+    if ($scheme) {
+      $title = $scheme['name'];
+    } else {
+      $title = "Scheme $i";
+    }
     $items['admin/user/access/tac_lite/scheme_' . $i] = array(
-      'title' => "Scheme $i",
+      'title' => $title,
       'page callback' => 'tac_lite_admin_settings_scheme',
       'page arguments' => array((string)$i),
       'type' => MENU_LOCAL_TASK,
@@ -254,13 +260,20 @@ function tac_lite_admin_scheme_form($form_state, $i) {
             '<' . t('none') . '>');
       }
     }
-    
+    $form['#submit'][] = 'tac_lite_admin_scheme_form_submit';
     return system_settings_form($form);
   }
   else {
     return (array('body' => array('#type' => 'markup',
                           '#value' => t('First select vocabularies on the <a href=!url>settings page</a>.', array('!url' => url('admin/user/access/tac_lite'))))));
   }
+}
+
+/**
+ * Submit function for admin settings form to rebuild the menu.
+ */
+function tac_lite_admin_scheme_form_submit($form, &$form_state) {
+  variable_set('menu_rebuild_needed', TRUE);
 }
 
 /**
