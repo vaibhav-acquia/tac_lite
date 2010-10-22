@@ -72,6 +72,7 @@ function tac_lite_menu() {
       'page callback' => 'tac_lite_admin_settings_scheme',
       'page arguments' => array((string)$i),
       'type' => MENU_LOCAL_TASK,
+      'weight' => $i,
       'access arguments' => array('administer tac_lite'),
     );
   }
@@ -362,14 +363,13 @@ function tac_lite_node_access_records($node) {
   // now find just the terms we're interested in.
   $tids = array();
   if (count($all_tids) && count($vids)) {
-    $result = db_query("SELECT DISTINCT td.tid FROM {term_data} td WHERE td.vid IN ('%s') AND td.tid IN ('%s')",
+    $result = db_query("SELECT DISTINCT td.tid FROM {term_data} td WHERE td.vid IN (%s) AND td.tid IN (%s)",
               implode(',', $vids),
               implode(',', $all_tids));
     while ($term = db_fetch_object($result)) {
       $tids[] = $term->tid;
     }
   }
-
   if (!count($tids)) {
     // no relevant terms found.
 
