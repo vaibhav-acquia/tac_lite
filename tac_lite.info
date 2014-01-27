@@ -1,5 +1,5 @@
 name = Taxonomy Access Control Lite
-description = Simple access control based on categories.
+description = Simple access control based on categories. -- The git master branch is deprecated!  Please choose another branch.  See https://drupal.org/node/53738/git-instructions
 dependencies[] = taxonomy
-core = 7.x
+;core = 7.x
 package = Access control
