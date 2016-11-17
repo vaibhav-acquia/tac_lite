@@ -104,30 +104,6 @@ function _tac_lite_get_terms($node) {
         }
       }
     }
-    // The logic above should have all terms already, but just in case we use
-    // the "original" logic below.  The taxonomy module stopped writing to the
-    // taxonomy_index for unpublished nodes, so this works only for published
-    // nodes.
-    $query = db_select('taxonomy_index', 'r');
-    $query->join('taxonomy_term_field_data', 't', 'r.tid = t.tid');
-    $query->fields('t', array('tid'));
-    $query->condition("r.nid", $node->id());
-    $query->condition("t.vid", $vids, 'IN');
-    $result = $query->execute()->fetchAssoc();
-    $options = array('absolute' => TRUE);
-    $result = $result ? $result : array();
-    foreach ($result as $tid) {
-      if (empty($tids[$tid])) {
-        $node_url = Url::fromRoute('entity.node.canonical', ['node' => $node->id()], $options)->toString();
-        $message = t('Unexpected term id :tid associated with :node. Please report this to :url.', array(
-          ':tid' => $tid,
-          ':node' => $node_url,
-          ':url' => 'https://drupal.org/node/1918272',
-        ));
-        \Drupal::logger('tac_lite')->debug($message);
-      }
-      $tids[$tid] = $tid;
-    }
   }
   elseif (\Drupal::currentUser()->hasPermission('administer tac_lite')) {
     drupal_set_message(t('tac_lite.module enabled, but not <a href=:admin_url>configured</a>. No tac_lite terms associated with :title.', array(
