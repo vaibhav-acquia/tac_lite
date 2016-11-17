@@ -187,7 +187,6 @@ function tac_lite_node_grants(AccountInterface $account, $op) {
     }
   }
   if (count($grants)) {
-    kint($grants);
     return $grants;
   }
 }
