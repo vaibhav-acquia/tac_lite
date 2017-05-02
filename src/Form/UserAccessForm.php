@@ -38,12 +38,12 @@ class UserAccessForm extends ConfigFormBase {
         if ($config['name']) {
           $perms = $config['perms'];
           if ($config['term_visibility']) {
-            $perms[] = t('term visibility');
+            $perms[] = $this->t('term visibility');
           }
           $form['tac_lite'][$config['realm']] = array(
             '#type' => 'details',
             '#title' => $config['name'],
-            '#description' => t('This scheme controls %perms.', array('%perms' => implode(' and ', $perms))),
+            '#description' => $this->t('This scheme controls %perms.', array('%perms' => implode(' and ', $perms))),
             '#open' => TRUE,
             '#tree' => TRUE,
           );
@@ -57,13 +57,13 @@ class UserAccessForm extends ConfigFormBase {
             }
             $form['tac_lite'][$config['realm']][$vid] = SchemeForm::tacLiteTermSelect($v, $default_values);
             $form['tac_lite'][$config['realm']][$vid]['#description']
-              = t('Grant permission to this user by selecting terms.  Note that permissions are in addition to those granted based on user roles.');
+              = $this->t('Grant permission to this user by selecting terms.  Note that permissions are in addition to those granted based on user roles.');
           }
         }
       }
       $form['tac_lite'][0] = array(
         '#type' => 'markup',
-        '#markup' => '<p>' . t('You may grant this user access based on the schemes and terms below.  These permissions are in addition to <a href=":url">role based grants on scheme settings pages</a>.',
+        '#markup' => '<p>' . $this->t('You may grant this user access based on the schemes and terms below.  These permissions are in addition to <a href=":url">role based grants on scheme settings pages</a>.',
           array(':url' => \Drupal::url('tac_lite.scheme_1'))) . "</p>\n",
         '#weight' => -1,
       );
@@ -73,7 +73,7 @@ class UserAccessForm extends ConfigFormBase {
         '#type' => 'markup',
         '#prefix' => '<p>',
         '#suffix' => '</p>',
-        '#markup' => t('First, select one or more vocabularies on the <a href=:url>settings page</a>. Then, return to this page to complete configuration.', array(':url' => \Drupal::url('tac_lite.administration'))),
+        '#markup' => $this->t('First, select one or more vocabularies on the <a href=:url>settings page</a>. Then, return to this page to complete configuration.', array(':url' => \Drupal::url('tac_lite.administration'))),
       );
     }
     return parent::buildForm($form, $form_state);

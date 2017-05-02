@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\tac_lite\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
@@ -29,7 +30,7 @@ class ConfigForm extends ConfigFormBase {
     $vocabularies = Vocabulary::loadMultiple();
     if (!count($vocabularies)) {
       $form['body'] = array(
-        '#markup' => t('You must <a href=":url">create a vocabulary</a> before you can use
+        '#markup' => $this->t('You must <a href=":url">create a vocabulary</a> before you can use
           tac_lite.', array(':url' => \Drupal::url('entity.taxonomy_vocabulary.add_form'))),
       );
       return $form;
@@ -42,10 +43,10 @@ class ConfigForm extends ConfigFormBase {
       }
       $form['tac_lite_categories'] = array(
         '#type' => 'select',
-        '#title' => t('Vocabularies'),
+        '#title' => $this->t('Vocabularies'),
         '#default_value' => $settings->get('tac_lite_categories'),
         '#options' => $options,
-        '#description' => t('Select one or more vocabularies to control privacy.<br/>Use caution with hierarchical (nested) taxonomies as <em>visibility</em> settings may cause problems on node edit forms.<br/>Do not select free tagging vocabularies, they are not supported.'),
+        '#description' => $this->t('Select one or more vocabularies to control privacy.<br/>Use caution with hierarchical (nested) taxonomies as <em>visibility</em> settings may cause problems on node edit forms.<br/>Do not select free tagging vocabularies, they are not supported.'),
         '#multiple' => TRUE,
         '#required' => TRUE,
       );
@@ -57,19 +58,19 @@ class ConfigForm extends ConfigFormBase {
       }
       $form['tac_lite_schemes'] = array(
         '#type' => 'select',
-        '#title' => t('Number of Schemes'),
-        '#description' => t('Each scheme allows for a different set of permissions.  For example, use scheme 1 for read-only permission; scheme 2 for read and update; scheme 3 for delete; etc. Additional schemes increase the size of your node_access table, so use no more than you need.'),
+        '#title' => $this->t('Number of Schemes'),
+        '#description' => $this->t('Each scheme allows for a different set of permissions.  For example, use scheme 1 for read-only permission; scheme 2 for read and update; scheme 3 for delete; etc. Additional schemes increase the size of your node_access table, so use no more than you need.'),
         '#default_value' => $settings->get('tac_lite_schemes'),
         '#options' => $scheme_options,
         '#required' => TRUE,
       );
       $form['tac_lite_rebuild'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Rebuild content permissions now'),
+        '#title' => $this->t('Rebuild content permissions now'),
         // Default false because usually only needed after scheme
         // has been changed.
         '#default_value' => FALSE,
-        '#description' => t('Do this once, after you have fully configured access by taxonomy.'),
+        '#description' => $this->t('Do this once, after you have fully configured access by taxonomy.'),
       );
     }
     return parent::buildForm($form, $form_state);
@@ -90,7 +91,7 @@ class ConfigForm extends ConfigFormBase {
       node_access_rebuild(TRUE);
     }
     else {
-      drupal_set_message(t('Do not forget to <a href=:url>rebuild node access permissions </a> after you have configured taxonomy-based access.', array(
+      drupal_set_message($this->t('Do not forget to <a href=:url>rebuild node access permissions </a> after you have configured taxonomy-based access.', array(
         ':url' => \Drupal::url('node.configure_rebuild_confirm'),
       )), 'warning');
     }

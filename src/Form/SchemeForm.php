@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\tac_lite\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
@@ -39,8 +40,8 @@ class SchemeForm extends ConfigFormBase {
       $form['tac_lite_config_scheme_' . $scheme] = array('#tree' => TRUE);
       $form['tac_lite_config_scheme_' . $scheme]['name'] = array(
         '#type' => 'textfield',
-        '#title' => t('Scheme name'),
-        '#description' => t("A human-readable name for administrators to see. For example, 'read' or 'read and write'."),
+        '#title' => $this->t('Scheme name'),
+        '#description' => $this->t("A human-readable name for administrators to see. For example, 'read' or 'read and write'."),
         '#default_value' => $config['name'],
         '#required' => TRUE,
       );
@@ -52,37 +53,37 @@ class SchemeForm extends ConfigFormBase {
       );
       $form['tac_lite_config_scheme_' . $scheme]['perms'] = array(
         '#type' => 'select',
-        '#title' => t('Permissions'),
+        '#title' => $this->t('Permissions'),
         '#multiple' => TRUE,
         '#options' => $options,
         '#default_value' => $config['perms'],
-        '#description' => t('Select which permissions are granted by this scheme.  <br/>Note when granting update, it is best to enable visibility on all terms.  Otherwise a user may unknowingly remove invisible terms while editing a node.'),
+        '#description' => $this->t('Select which permissions are granted by this scheme.  <br/>Note when granting update, it is best to enable visibility on all terms.  Otherwise a user may unknowingly remove invisible terms while editing a node.'),
         '#required' => FALSE,
       );
 
       $form['tac_lite_config_scheme_' . $scheme]['unpublished'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Apply to unpublished content'),
-        '#description' => t('If checked, permissions in this scheme will apply to unpublished content.  If this scheme includes the view permission, then <strong>unpublished nodes will be visible</strong> to users whose roles would grant them access to the published node.'),
+        '#title' => $this->t('Apply to unpublished content'),
+        '#description' => $this->t('If checked, permissions in this scheme will apply to unpublished content.  If this scheme includes the view permission, then <strong>unpublished nodes will be visible</strong> to users whose roles would grant them access to the published node.'),
         '#default_value' => $config['unpublished'],
       );
 
       $form['tac_lite_config_scheme_' . $scheme]['term_visibility'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Visibility'),
-        '#description' => t('If checked, this scheme determines whether a user can view <strong>terms</strong>.  Note the <em>view</em> permission in the select field above refers to <strong>node</strong> visibility.  This checkbox refers to <strong>term</strong> visibility, for example in a content edit form or tag cloud.'),
+        '#title' => $this->t('Visibility'),
+        '#description' => $this->t('If checked, this scheme determines whether a user can view <strong>terms</strong>.  Note the <em>view</em> permission in the select field above refers to <strong>node</strong> visibility.  This checkbox refers to <strong>term</strong> visibility, for example in a content edit form or tag cloud.'),
         '#default_value' => $config['term_visibility'],
       );
 
       $form['helptext'] = array(
         '#type' => 'markup',
-        '#markup' => t('To grant to an individual user, visit the <em>access by taxonomy</em> tab on the account edit page.'),
+        '#markup' => $this->t('To grant to an individual user, visit the <em>access by taxonomy</em> tab on the account edit page.'),
         '#prefix' => '<p>',
         '#suffix' => '</p>',
       );
       $form['helptext2'] = array(
         '#type' => 'markup',
-        '#markup' => t('To grant by role, select the terms below.'),
+        '#markup' => $this->t('To grant by role, select the terms below.'),
         '#prefix' => '<p>',
         '#suffix' => '</p>',
       );
@@ -94,7 +95,7 @@ class SchemeForm extends ConfigFormBase {
         $form['tac_lite_grants_scheme_' . $scheme][$rid] = array(
           '#type' => 'details',
           '#tree' => TRUE,
-          '#title' => Html::escape(t('Grant permission by role: :role', array(':role' => $role_name))),
+          '#title' => Html::escape($this->t('Grant permission by role: :role', array(':role' => $role_name))),
           '#open' => TRUE,
         );
         $defaults = isset($all_defaults[$rid]) ? $all_defaults[$rid] : NULL;
@@ -107,11 +108,11 @@ class SchemeForm extends ConfigFormBase {
       }
       $form['tac_lite_rebuild'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Rebuild content permissions now'),
+        '#title' => $this->t('Rebuild content permissions now'),
         // Default false because usually only needed after scheme has
         // been changed.
         '#default_value' => FALSE,
-        '#description' => t('Do this once, after you have fully configured access by taxonomy.'),
+        '#description' => $this->t('Do this once, after you have fully configured access by taxonomy.'),
         '#weight' => 9,
       );
     }
@@ -120,7 +121,7 @@ class SchemeForm extends ConfigFormBase {
         '#type' => 'markup',
         '#prefix' => '<p>',
         '#suffix' => '</p>',
-        '#markup' => t('First, select one or more vocabularies on the <a href=:url>settings tab</a>. Then, return to this page to complete configuration.', array(':url' => \Drupal::url('tac_lite.administration'))),
+        '#markup' => $this->t('First, select one or more vocabularies on the <a href=:url>settings tab</a>. Then, return to this page to complete configuration.', array(':url' => \Drupal::url('tac_lite.administration'))),
       );
     }
 
@@ -141,7 +142,7 @@ class SchemeForm extends ConfigFormBase {
       node_access_rebuild(TRUE);
     }
     else {
-      drupal_set_message(t('Do not forget to <a href=:url>rebuild node access permissions</a> after you have configured taxonomy-based access.', array(':url' => \Drupal::url('node.configure_rebuild_confirm'))), 'warning');
+      drupal_set_message($this->t('Do not forget to <a href=:url>rebuild node access permissions</a> after you have configured taxonomy-based access.', array(':url' => \Drupal::url('node.configure_rebuild_confirm'))), 'warning');
     }
     parent::submitForm($form, $form_state);
   }
