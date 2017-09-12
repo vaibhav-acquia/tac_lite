@@ -79,6 +79,11 @@ class ConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Clear the cache if new schemes are created/deleted, so that tabs are correctly displayed/removed.
+    if ($this->config('tac_lite.settings')->get('tac_lite_schemes') != $form_state->getValue('tac_lite_schemes')) {
+      \Drupal::cache('render')->deleteAll();
+    }
+
     // Change configuration.
     $this->config('tac_lite.settings')
       ->set('tac_lite_categories', $form_state->getValue('tac_lite_categories'))
