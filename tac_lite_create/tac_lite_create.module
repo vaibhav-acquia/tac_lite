@@ -69,31 +69,30 @@ function tac_lite_create_form_alter(&$form, FormStateInterface $form_state, $for
     // go through each one in the form.
     foreach ($term_fields as $field_name => $vocab_name) {
       // Skip auto complete fields as they are not supported.
-      if ($form[$field_name]['widget']['#type'] != 'select' && $form[$field_name]['widget']['#type'] != 'radios') {
-        continue;
-      }
-      // Get the vocabulary info so we can get the vid.
-      $v = Vocabulary::load($vocab_name);
-      // We only want to act on this field if it is tied to a
-      // vocabulary we are set to control.
-      if (!in_array($v->id(), $vids)) {
-        continue;
-      }
-      // Go through each option for this field.
-      foreach ($form[$field_name]['widget']['#options'] as $term_id => $term_name) {
-        // Skip the "<none>" option (or anything like it).
-        if (!is_numeric($term_id)) {
+      if (isset($form[$field_name]['widget']['#type']) && ($form[$field_name]['widget']['#type'] == 'select' || $form[$field_name]['widget']['#type'] != 'radios' || $form[$field_name]['widget']['#type'] != 'checkboxes')) {
+        // Get the vocabulary info so we can get the vid.
+        $v = Vocabulary::load($vocab_name);
+        // We only want to act on this field if it is tied to a
+        // vocabulary we are set to control.
+        if (!in_array($v->id(), $vids)) {
           continue;
         }
+        // Go through each option for this field.
+        foreach ($form[$field_name]['widget']['#options'] as $term_id => $term_name) {
+          // Skip the "<none>" option (or anything like it).
+          if (!is_numeric($term_id)) {
+            continue;
+          }
 
-        // Is this option not in the list of terms this user can create with?
-        if (!in_array($term_id, $tids)) {
-          // The term is not the default value, and user is not
-          // allowed to create with it.
-          // HELP: What if it IS the default value? Do we not unset it?
-          if ($term_id != $form[$field_name]['widget']['#default_value']) {
-            // Unset the option to it doesn't appear.
-            unset($form[$field_name]['widget']['#options'][$term_id]);
+          // Is this option not in the list of terms this user can create with?
+          if (!in_array($term_id, $tids)) {
+            // The term is not the default value, and user is not
+            // allowed to create with it.
+            // HELP: What if it IS the default value? Do we not unset it?
+            if ($term_id != $form[$field_name]['widget']['#default_value']) {
+              // Unset the option to it doesn't appear.
+              unset($form[$field_name]['widget']['#options'][$term_id]);
+            }
           }
         }
       }
