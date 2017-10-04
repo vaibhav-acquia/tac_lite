@@ -33,6 +33,7 @@ function tac_lite_create_form_alter(&$form, FormStateInterface $form_state, $for
   }
   elseif ($base_form == 'node_form') {
     $account = \Drupal::currentUser();
+    $widgets = ['select', 'radios', 'checkboxes'];
     if (\Drupal::currentUser()->hasPermission('administer tac_lite')) {
       return;
     }
@@ -69,7 +70,7 @@ function tac_lite_create_form_alter(&$form, FormStateInterface $form_state, $for
     // go through each one in the form.
     foreach ($term_fields as $field_name => $vocab_name) {
       // Skip auto complete fields as they are not supported.
-      if (isset($form[$field_name]['widget']['#type']) && ($form[$field_name]['widget']['#type'] == 'select' || $form[$field_name]['widget']['#type'] != 'radios' || $form[$field_name]['widget']['#type'] != 'checkboxes')) {
+      if (isset($form[$field_name]['widget']['#type']) && in_array($form[$field_name]['widget']['#type'], $widgets)) {
         // Get the vocabulary info so we can get the vid.
         $v = Vocabulary::load($vocab_name);
         // We only want to act on this field if it is tied to a
