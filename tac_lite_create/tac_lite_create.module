@@ -23,12 +23,12 @@ function tac_lite_create_form_alter(&$form, FormStateInterface $form_state, $for
     $config = $form['#tac_lite_config'];
     $scheme = isset($build_info['args'][0]) ? $build_info['args'][0] : NULL;
     if (!empty($form['tac_lite_config_scheme_' . $scheme])) {
-      $form['tac_lite_config_scheme_' . $scheme]['tac_lite_create'] = array(
+      $form['tac_lite_config_scheme_' . $scheme]['tac_lite_create'] = [
         '#type' => 'checkbox',
         '#title' => 'Visibility on create and edit forms',
         '#default_value' => isset($config['tac_lite_create']) ? $config['tac_lite_create'] : FALSE,
         '#description' => t('Show terms when creating content.  This <strong>does not</strong> control which users can create a given content type. This <strong>does</strong> control which terms appear on the node edit forms.  <br/>Note that schemes granting <em>update</em> permission (above) imply <em>visibility on forms</em> as well.'),
-      );
+      ];
     }
   }
   elseif ($base_form == 'node_form') {
@@ -39,7 +39,7 @@ function tac_lite_create_form_alter(&$form, FormStateInterface $form_state, $for
     }
     $settings = \Drupal::config('tac_lite.settings');
     $vids = $settings->get('tac_lite_categories');
-    $tids = array();
+    $tids = $term_fields = [];
     $schemes = $settings->get('tac_lite_schemes');
     for ($i = 1; $i <= $schemes; $i++) {
       $config = SchemeForm::tacLiteConfig($i);
@@ -49,7 +49,6 @@ function tac_lite_create_form_alter(&$form, FormStateInterface $form_state, $for
       }
     }
     // Go through all of the fields in the system to find the ones we want use.
-    $term_fields = array();
     $storage = $form_state->getStorage();
     $form_display = $storage['form_display'] ?: NULL;
     $bundle = $form_display ? $form_display->get('bundle') : NULL;

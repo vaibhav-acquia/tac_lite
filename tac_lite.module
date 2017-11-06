@@ -27,21 +27,21 @@ function tac_lite_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<p>' . t('There are several steps required to set up Taxonomy Access Control Lite.') . '</p>';
       $output .= '<ol>';
       $output .= '<li>' . t("Define one or more vocabularies whose terms will control which users have access. For example, you could define a vocabulary called 'Privacy' with terms 'Public' and 'Private'.") . '</li>';
-      $output .= '<li>' . t('Tell this module which vocabularies control privacy :url', array(
+      $output .= '<li>' . t('Tell this module which vocabularies control privacy :url', [
         ':url' => $admin_tac_lite_url,
-      )) . '</li>';
+      ]) . '</li>';
       $output .= '<li>' . t('Configure one or more <em>schemes</em>.   simple site may need only one scheme which grants view permission.  A more complex site might require additional schemes for update and delete.  Each scheme associates roles and terms.  Users will be granted priviliges based on their role and the terms with which nodes are tagged.') . '</li>';
-      $output .= '<li>' . t('When settings are correct, <a href=:url>rebuild node_access permissions</a>.', array(
+      $output .= '<li>' . t('When settings are correct, <a href=:url>rebuild node_access permissions</a>.', [
         ':url' => \Drupal::url('node.configure_rebuild_confirm'),
-      )) . '</li>';
+      ]) . '</li>';
       $output .= '<li>' . t('Optionally, grant access to individual users. (See the <em>access by taxonomy</em> tab, under user -> edit.)') . '</li>';
       $output .= '</ol>';
       $output .= '<p>' . t('Troubleshooting:.') . '<ul>';
       $output .= '<li>' . t('Try rebuilding node_access permissions.') . '</li>';
       $output .= '<li>' . t('Try disabling tac_lite.module, rebuilding permissions.  With the module disabled, users should not have the privileges you are attempting to grant with this module.') . '</li>';
-      $output .= '<li>' . t("The devel_node_access.module (part of <a href=:url>devel</a>) helps to see exactly what Drupal's node_access table is doing.", array(
+      $output .= '<li>' . t("The devel_node_access.module (part of <a href=:url>devel</a>) helps to see exactly what Drupal's node_access table is doing.", [
         ':url' => 'http://drupal.org/project/devel',
-      )) . '</li>';
+      ]) . '</li>';
       $output .= '</ul></p>';
       return $output;
   }
@@ -54,7 +54,7 @@ function tac_lite_node_access_records(NodeInterface $node) {
   if (count($tids)) {
     // If we're here, the node has terms associated with it which restrict
     // access to the node.
-    $grants = array();
+    $grants = [];
     $settings = \Drupal::config('tac_lite.settings');
     $schemes = $settings->get('tac_lite_schemes');
     for ($i = 1; $i <= $schemes; $i++) {
@@ -63,7 +63,7 @@ function tac_lite_node_access_records(NodeInterface $node) {
       // if requested in the scheme.
       if ($node->isPublished() || $config['unpublished']) {
         foreach ($tids as $tid) {
-          $grant = array(
+          $grant = [
             'realm' => $config['realm'],
             // Use term id as grant id.
             'gid' => $tid,
@@ -71,7 +71,7 @@ function tac_lite_node_access_records(NodeInterface $node) {
             'grant_update' => 0,
             'grant_delete' => 0,
             'priority' => 0,
-          );
+          ];
           foreach ($config['perms'] as $perm) {
             $grant[$perm] = 1;
           }
@@ -86,7 +86,7 @@ function tac_lite_node_access_records(NodeInterface $node) {
  * Gets terms from a node that belong to vocabularies selected.
  */
 function _tac_lite_get_terms($node) {
-  $tids = array();
+  $tids = [];
   // Get the vids that tac_lite cares about.
   $config = \Drupal::config('tac_lite.settings');
   $vids = $config->get('tac_lite_categories') ? array_keys($config->get('tac_lite_categories')) : NULL;
@@ -106,10 +106,10 @@ function _tac_lite_get_terms($node) {
     }
   }
   elseif (\Drupal::currentUser()->hasPermission('administer tac_lite')) {
-    drupal_set_message(t('tac_lite.module enabled, but not <a href=:admin_url>configured</a>. No tac_lite terms associated with :title.', array(
+    drupal_set_message(t('tac_lite.module enabled, but not <a href=:admin_url>configured</a>. No tac_lite terms associated with :title.', [
       ':admin_url' => \Drupal::url('tac_lite.administration'),
       ':title' => $node->getTitle(),
-    )
+    ]
     ));
   }
   return $tids;
@@ -153,7 +153,7 @@ function tac_lite_node_get_terms($node) {
  * requested op.
  */
 function tac_lite_node_grants(AccountInterface $account, $op) {
-  $grants = array();
+  $grants = [];
   $settings = \Drupal::config('tac_lite.settings');
   $schemes = $settings->get('tac_lite_schemes');
   for ($i = 1; $i <= $schemes; $i++) {
@@ -176,11 +176,11 @@ function _tac_lite_user_tids($account, $scheme, $config) {
   // Grant id 0 is reserved for nodes which were not given a grant id
   // when they were created. By adding 0 to the grant id, we let the
   // user view those nodes.
-  $grants = array(0);
+  $grants = [0];
   $config = \Drupal::config('tac_lite.settings');
   $schemes = $config->get('tac_lite_schemes');
   for ($i = 1; $i <= $schemes; $i++) {
-    $data = \Drupal::service('user.data')->get('tac_lite', $account->id(), 'tac_lite_scheme_' . $i) ?: array();
+    $data = \Drupal::service('user.data')->get('tac_lite', $account->id(), 'tac_lite_scheme_' . $i) ?: [];
     if (count($data)) {
       foreach ($data as $tids) {
         if (count($tids)) {
@@ -193,7 +193,7 @@ function _tac_lite_user_tids($account, $scheme, $config) {
   // Add per-role grants in addition to per-user grants.
   $settings = \Drupal::config('tac_lite.settings');
   $defaults = $settings->get('tac_lite_grants_scheme_' . $scheme);
-  $defaults = $defaults ? $defaults : array();
+  $defaults = $defaults ? $defaults : [];
   $roles = $account->getRoles();
   foreach ($roles as $rid) {
     if (isset($defaults[$rid]) && count($defaults[$rid])) {
@@ -229,7 +229,7 @@ function tac_lite_query_term_access_alter(AlterableInterface $query) {
   }
   // The terms this user is allowed to see.
   $term_visibility = FALSE;
-  $tids = array();
+  $tids = [];
   for ($i = 1; $i <= $schemes; $i++) {
     $config = SchemeForm::tacLiteConfig($i);
     if ($config['term_visibility']) {

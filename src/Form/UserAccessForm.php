@@ -40,18 +40,18 @@ class UserAccessForm extends ConfigFormBase {
           if ($config['term_visibility']) {
             $perms[] = $this->t('term visibility');
           }
-          $form['tac_lite'][$config['realm']] = array(
+          $form['tac_lite'][$config['realm']] = [
             '#type' => 'details',
             '#title' => $config['name'],
-            '#description' => $this->t('This scheme controls %perms.', array('%perms' => implode(' and ', $perms))),
+            '#description' => $this->t('This scheme controls %perms.', ['%perms' => implode(' and ', $perms)]),
             '#open' => TRUE,
             '#tree' => TRUE,
-          );
+          ];
           // Create a form element for each vocabulary.
           foreach ($vids as $vid) {
             $v = $vocabularies[$vid];
-            $default_values = array();
-            $data = \Drupal::service('user.data')->get('tac_lite', $user, 'tac_lite_scheme_' . $i) ?: array();
+            $default_values = [];
+            $data = \Drupal::service('user.data')->get('tac_lite', $user, 'tac_lite_scheme_' . $i) ?: [];
             if (!empty($data) && $data[$vid]) {
               $default_values = $data[$vid];
             }
@@ -61,20 +61,20 @@ class UserAccessForm extends ConfigFormBase {
           }
         }
       }
-      $form['tac_lite'][0] = array(
+      $form['tac_lite'][0] = [
         '#type' => 'markup',
         '#markup' => '<p>' . $this->t('You may grant this user access based on the schemes and terms below.  These permissions are in addition to <a href=":url">role based grants on scheme settings pages</a>.',
-          array(':url' => \Drupal::url('tac_lite.scheme_1'))) . "</p>\n",
+          [':url' => \Drupal::url('tac_lite.scheme_1')]) . "</p>\n",
         '#weight' => -1,
-      );
+      ];
     }
     else {
-      $form['tac_lite_help'] = array(
+      $form['tac_lite_help'] = [
         '#type' => 'markup',
         '#prefix' => '<p>',
         '#suffix' => '</p>',
-        '#markup' => $this->t('First, select one or more vocabularies on the <a href=:url>settings page</a>. Then, return to this page to complete configuration.', array(':url' => \Drupal::url('tac_lite.administration'))),
-      );
+        '#markup' => $this->t('First, select one or more vocabularies on the <a href=:url>settings page</a>. Then, return to this page to complete configuration.', [':url' => \Drupal::url('tac_lite.administration')]),
+      ];
     }
     return parent::buildForm($form, $form_state);
   }

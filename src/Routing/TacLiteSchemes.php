@@ -12,7 +12,7 @@ class TacLiteSchemes {
    * {@inheritdoc}
    */
   public function routes() {
-    $routes = array();
+    $routes = [];
     $config = \Drupal::config('tac_lite.settings');
     $schemes = $config->get('tac_lite_schemes');
     for ($i = 1; $i <= $schemes; $i++) {
@@ -20,15 +20,15 @@ class TacLiteSchemes {
         // Path to attach this route to.
         '/admin/config/people/tac_lite/scheme_' . $i,
         // Route defaults.
-        array(
+        [
           '_form' => '\Drupal\tac_lite\Form\SchemeForm',
           '_title' => 'Access by Taxonomy',
           'scheme' => $i,
-        ),
+        ],
         // Route requirements.
-        array(
+        [
           '_permission'  => 'administer tac_lite',
-        )
+        ]
       );
     }
     return $routes;
