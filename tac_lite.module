@@ -243,7 +243,8 @@ function tac_lite_query_term_access_alter(AlterableInterface $query) {
     $primary_table = '';
     $t = $query->getTables();
     foreach ($t as $info) {
-      if (!$info['join type']) {
+      $table = $info['table'];
+      if ($table == 'taxonomy_term_data' || $table == 'taxonomy_term_field_data') {
         $primary_table = $info['alias'];
       }
     }
