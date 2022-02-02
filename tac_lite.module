@@ -139,7 +139,7 @@ function tac_lite_node_get_terms($node) {
               $term = Term::load($item['target_id']);
             }
             if ($term) {
-              $terms[$node->id()][$term->getVocabularyId()][$term->id()] = $term;
+              $terms[$node->id()][$term->bundle()][$term->id()] = $term;
             }
           }
         }
