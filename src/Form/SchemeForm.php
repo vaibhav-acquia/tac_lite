@@ -7,6 +7,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Component\Utility\Html;
+use Drupal\user\Entity\Role;
 
 /**
  * Builds the scheme configuration form.
@@ -34,7 +35,7 @@ class SchemeForm extends ConfigFormBase {
     $settings = $this->configFactory->get('tac_lite.settings');
     $this->scheme = $scheme;
     $vids = $settings->get('tac_lite_categories');
-    $roles = user_roles();
+    $roles = Role::loadMultiple();
     $config = self::tacLiteConfig($scheme);
     $form['#tac_lite_config'] = $config;
     if (count($vids)) {
