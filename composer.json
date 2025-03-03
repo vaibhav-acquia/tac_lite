@@ -1,0 +1,6 @@
+{
+  "name": "drupal/tac_lite",
+  "type": "drupal-module",
+  "keywords": ["Drupal"],
+  "require": { }
+}
